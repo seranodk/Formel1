@@ -4,7 +4,7 @@ Formel 1 set ovenfra i TV-stil – til mobil og browser.
 
 **Spil:** https://seranodk.github.io/Formel1/
 
-Kør **Hurtig løb** (vælg kører og bane) eller en hel **Sæson** gennem de 10 baner i 2026-kalenderens rækkefølge med alle 22 kørere fra de 11 hold. Banerne er bygget ud fra de rigtige layouts: gadebaner med mure tæt på asfalten og natløb under projektører.
+Kør **Hurtig løb** (vælg kører og bane) eller en hel **Sæson** gennem alle 23 baner i 2026-kalenderens rækkefølge med alle 22 kørere fra de 11 hold. Banerne er bygget ud fra de rigtige layouts: gadebaner med mure tæt på asfalten og natløb under projektører.
 
 ## Sådan spiller du
 - **◀ ▶** nederst til venstre drejer bilen.
