@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.22</title>
+<title>Formel 1 v0.23</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.22">
+<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.23">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -96,7 +96,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.22 · sæson 2026</div>
+    <div class="sub">v0.23 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big blue" id="train">TRÆNING<small>Kør alene og jagt din egen bedste omgang</small></button>
@@ -152,7 +152,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <div class="row"><label>Motorlyd</label><div class="seg" data-k="motor"><button data-v="rec">Optagelse</button><button data-v="mix">Blandet</button></div></div>
     <div class="row"><label>Lyd</label><div class="seg" data-k="snd"><button data-v="0">Fra</button><button data-v="1">Til</button></div></div>
     <button class="big" id="closesettings">GEM OG TILBAGE</button>
-    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen. Der er ingen styrehjælp – du styrer selv.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.<br><br><b>Modstandere:</b> de 21 andre kørere kører med deres holds rigtige fart. Kør tæt bag en bil på langsiderne for at få slipstrøm og ekstra fart. <i>Lette</i>, <i>Normale</i> eller <i>Svære</i> bestemmer, hvor gode kørerne er.<br><br><b>Motorlyd:</b> <i>Optagelse</i> er rigtige F1-biler fra 2005–2010. <i>Blandet</i> lægger en model af de nyere V6-turbohybridmotorer (2014–2025) oveni.<br><b>Lyd:</b> rigtige F1-optagelser af Edvvc (Brawn-Mercedes BGP 001, Red Bull-Cosworth RB1, Williams-Cosworth FW32), Wikimedia Commons, CC BY-SA 3.0. Publikum: WebbFilmsUK, CC BY 4.0. Klippet til løkker af lights-out-projektet.</div>
+    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen. Der er ingen styrehjælp – du styrer selv.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.<br><br><b>Modstandere:</b> de 21 andre kørere kører med deres holds rigtige fart. Kør tæt bag en bil på langsiderne for at få slipstrøm og ekstra fart. <i>Lette</i>, <i>Normale</i> eller <i>Svære</i> bestemmer, hvor gode kørerne er. Deres fart måles mod en meget god omgang på banen – og kører du selv hurtigere end den, mod din egen rekord, så de altid giver modstand.<br><br><b>Motorlyd:</b> <i>Optagelse</i> er rigtige F1-biler fra 2005–2010. <i>Blandet</i> lægger en model af de nyere V6-turbohybridmotorer (2014–2025) oveni.<br><b>Lyd:</b> rigtige F1-optagelser af Edvvc (Brawn-Mercedes BGP 001, Red Bull-Cosworth RB1, Williams-Cosworth FW32), Wikimedia Commons, CC BY-SA 3.0. Publikum: WebbFilmsUK, CC BY 4.0. Klippet til løkker af lights-out-projektet.</div>
   </div>
 </div>
 
@@ -176,7 +176,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.22</div>
+<div class="ver">v0.23</div>
 
 <script>
 "use strict";
@@ -889,7 +889,9 @@ function sectorDone(k){
 // The 21 other drivers. Each AI car moves along the track in track coordinates: s = distance along the
 // centre line (in 6-unit samples, counting up across laps; negative behind the start line) and o = sideways
 // offset. That keeps them on the road and makes overtaking a matter of picking a free lane.
-const AIDIFF={let:0.87,normal:0.915,svaer:0.965}; // v0.22: 'let' is the old normal, normal a bit better, svær much harder
+// v0.23: the opponents' pace is set from a lap time. That is your own record on the circuit (kept on this
+// device) when you have one, otherwise the lap of a very good player. The fastest opponents then lap at:
+const AIDIFF={let:1.16,normal:0.995,svaer:0.965}; // × that lap time
 const PTS=[25,18,15,12,10,8,6,4,2,1];
 let AIS=[],VA=null,RACEO=null;
 const CARL=78,CARW=40; // car length and width in world units
@@ -897,12 +899,30 @@ const dkey=(t,d)=>t+d;              // driver id: team id + driver index, e.g. '
 function drvOf(id){const T=TEAMS.find(t=>t.id===id.slice(0,-1));return {T,D:T.d[+id.slice(-1)]};}
 function wrapD(a,b){return ((a-b)%N+N*1.5)%N-N/2;} // signed distance a-b in samples, the short way round
 function buildAiTrack(){
-  // corner speed limits for the AI (same grip rules as the player's car, braking curve included)
-  VA=new Float32Array(N);const top=360/KMH0;
-  for(let i=0;i<N;i++){const k=Math.max(Math.abs(CURV[i]),1e-6);VA[i]=Math.min(top,Math.sqrt(726/k),TUNE.yawCap/k)*0.9;}
-  for(let pass=0;pass<2;pass++)for(let i=N-1;i>=0;i--){const j=(i+1)%N;VA[i]=Math.min(VA[i],Math.sqrt(VA[j]*VA[j]+2*top*TUNE.brk*0.8*6));}
+  // the opponents drive the racing line as fast as its curves allow (same grip as your car), and slow down
+  // for corners by lifting off, like you do – a skill of 1.0 is a very good human lap
   RACEO=new Float32Array(N);
   for(let i=0;i<N;i++){const c=center[i],n=NOR[i];RACEO[i]=Math.max(-(HALF-30),Math.min(HALF-30,(RACE[i][0]-c[0])*n[0]+(RACE[i][1]-c[1])*n[1]));}
+  VA=new Float32Array(N);const top=360/KMH0;
+  for(let i=0;i<N;i++){const a=RACE[(i-4+N)%N],b=RACE[i],c=RACE[(i+4)%N];const ab=Math.hypot(b[0]-a[0],b[1]-a[1]),bc=Math.hypot(c[0]-b[0],c[1]-b[1]),ac=Math.hypot(c[0]-a[0],c[1]-a[1]);
+    const k=Math.max(2*Math.abs((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]))/Math.max(ab*bc*ac,1e-6),1e-6);VA[i]=Math.min(top,Math.sqrt(726/k),TUNE.yawCap/k);}
+  for(let pass=0;pass<2;pass++)for(let i=N-1;i>=0;i--){const j=(i+1)%N,dec=top*0.12+VA[j]*0.6;VA[i]=Math.min(VA[i],VA[j]+dec*6/Math.max(VA[j],50));}
+}
+// lap time of a lone opponent car (flying lap) when it drives the racing line at m × the corner limits
+function aiLapTime(m,top,acc){
+  let v=VA[0]*m,t=0;const dt=1/60;
+  for(let s0=0;s0<N*2;){const i=Math.floor(s0)%N,vt=Math.min(top,VA[(i+2)%N]*m);
+    if(v<vt)v=Math.min(vt,v+top*acc*(1-(v/top)**2)*dt);else v=Math.max(vt,v-(top*0.12+v*0.6)*dt*1.15);
+    s0+=v*dt/6;if(s0>=N)t+=dt;if(t>400)break;}
+  return t;
+}
+// the corner factor that gives a flying lap of T seconds
+function aiSkillFor(T,top,acc){let lo=0.5,hi=1.4;for(let k=0;k<14;k++){const m=(lo+hi)/2;if(aiLapTime(m,top,acc)>T)lo=m;else hi=m;}return (lo+hi)/2;}
+function aiRefLap(){
+  const P=teamPace('mer'),top=P.top/KMH0,acc=0.40;
+  const good=aiLapTime(0.94,top,acc);            // a very good player's lap (measured with a test driver)
+  const rec=RECS[S.bane]&&RECS[S.bane].lap;     // your own best lap here
+  return {T:rec&&rec>good*0.8?Math.min(good,rec):good,good,rec,top,acc};
 }
 function gridSlot(k){return {s:-(18+k*12),o:(k%2?1:-1)*TW/4};}
 function setupField(withAI){
@@ -914,12 +934,12 @@ function setupField(withAI){
   let seed=(Date.now()%100000)+7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const all=[];for(const T of TEAMS)for(let d=0;d<2;d++)all.push({id:dkey(T.id,d),team:T.id,sc:teamPace(T.id).n+rnd()*0.35});
   all.sort((a,b)=>b.sc-a.sc);
-  let mySlot=0;const base=AIDIFF[S.ai]||AIDIFF.normal;
+  let mySlot=0;const ref=aiRefLap(),mTop=aiSkillFor(ref.T*(AIDIFF[S.ai]||AIDIFF.normal),ref.top,ref.acc);R.aiRef=ref;R.aiM=mTop;
   all.forEach((e,k)=>{
     if(e.id===me){mySlot=k;return;}
-    const P=teamPace(e.team),g=gridSlot(k),top=P.top/KMH0*({let:0.985,normal:0.995}[S.ai]||1); // easier opponents also lift a little earlier on the straights
-    AIS.push({id:e.id,team:e.team,slot:k,s:g.s,o:g.o,v:0,top,acc:0.40*(0.9+0.1*P.n)*(S.ai==="svaer"?1.04:1),
-      skill:base+0.05*P.n+(rnd()-0.5)*0.02,react:0.15+rnd()*0.35,passO:null,passT:0,lat:0,fin:null,
+    const P=teamPace(e.team),g=gridSlot(k),top=P.top/KMH0; // easier opponents also lift a little earlier on the straights
+    AIS.push({id:e.id,team:e.team,slot:k,s:g.s,o:g.o,v:0,top,acc:0.40*(0.9+0.1*P.n),
+      skill:mTop*(0.955+0.045*P.n)+(rnd()-0.5)*0.012,react:0.15+rnd()*0.35,passO:null,passT:0,lat:0,fin:null,
       x:0,y:0,a:0,px:undefined,py:0,pa:0,steer:0,dist:rnd()*50});
   });
   for(const c of AIS)aiPose(c);
@@ -948,7 +968,7 @@ function aiStep(dt){
     if(!racing||R.t<R.go+c.react){aiPose(c);continue;}
     const i=((Math.floor(c.s)%N)+N)%N;
     // target speed: corner limit ahead × this driver's skill, the car's own top speed
-    let vt=Math.min(c.top*(c.fin!=null?0.55:1),VA[i]*c.skill*0.96);
+    let vt=Math.min(c.top*(c.fin!=null?0.55:1),VA[(i+2)%N]*c.skill);
     let tow=1;
     // look at the cars ahead
     let blk=null,bd=1e9;const look=(CARL+20+c.v*0.35)/6;
@@ -971,7 +991,7 @@ function aiStep(dt){
     // can't get past yet: follow at a safe distance
     if(blk&&Math.abs(blk.o-c.o)<CARW+4){const gap=bd*6-CARL;vt=Math.min(vt,Math.max(0,blk.v+gap*1.6-20));}
     // speed
-    if(c.v<vt)c.v+=c.top*c.acc*(1-(c.v/c.top)**2)*dt;else c.v=Math.max(vt,c.v-c.top*TUNE.brk*dt);
+    if(c.v<vt)c.v+=c.top*c.acc*(1-(c.v/c.top)**2)*dt;else c.v=Math.max(vt,c.v-(c.top*0.12+c.v*0.6)*dt*1.15);
     // sideways: ease towards the chosen lane, quicker at speed
     const maxLat=40+90*Math.min(1,c.v/c.top);
     const want=Math.max(-maxLat,Math.min(maxLat,(to-c.o)*2.2));
