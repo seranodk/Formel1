@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.11</title>
+<title>Formel 1 v0.12</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne. Hurtig løb eller en hel sæson på 10 rigtige baner – blandt dem Monaco, Spa, Suzuka og natløbene i Singapore og Las Vegas. v0.11">
+<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne. Hurtig løb eller en hel sæson på 10 rigtige baner – blandt dem Monaco, Spa, Suzuka og natløbene i Singapore og Las Vegas. v0.12">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -79,7 +79,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.11 · sæson 2026</div>
+    <div class="sub">v0.12 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big alt" id="opensettings">Indstillinger</button>
@@ -129,7 +129,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <div class="row"><label>Omgange</label><div class="seg" data-k="laps"><button data-v="3">3</button><button data-v="5">5</button><button data-v="10">10</button></div></div>
     <div class="row"><label>Lyd</label><div class="seg" data-k="snd"><button data-v="0">Fra</button><button data-v="1">Til</button></div></div>
     <button class="big" id="closesettings">GEM OG TILBAGE</button>
-    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen, og en let styrehjælp retter den ind efter vejen.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.</div>
+    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen. Der er ingen styrehjælp – du styrer selv.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.</div>
   </div>
 </div>
 
@@ -152,7 +152,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.11</div>
+<div class="ver">v0.12</div>
 
 <script>
 "use strict";
@@ -176,7 +176,7 @@ let S={...DEF};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('f1set')||'{}')); }catch(e){}
 S.fart='normal';S.auto='0'; // removed from settings in v0.4
 if(!['rbr','mon','sil','spa','mza','suz','sgp','lvg','bra','abu'].includes(S.bane))S.bane='rbr';
-S.cam='chase';S.ctrl='buttons';S.hjaelp='til'; // v0.11: camera follows the car, button steering, light steering assist always on
+S.cam='chase';S.ctrl='buttons';S.hjaelp='fra'; // v0.12: camera follows the car, button steering, no steering assist
 function saveS(){ try{ localStorage.setItem('f1set',JSON.stringify(S)); }catch(e){} }
 function team(){return TEAMS.find(t=>t.id===S.team)||TEAMS[0];}
 function driver(){const t=team();return t.d[+S.drv===1?1:0];}
@@ -1128,7 +1128,7 @@ function audioTick(){
 // ================= Flow =================
 const $=id=>document.getElementById(id);
 function startRace(){
-  S.cam='chase';S.ctrl='buttons';S.hjaelp='til';
+  S.cam='chase';S.ctrl='buttons';S.hjaelp='fra';
   loadTrack(S.bane);
   applyFart();
   R.state='race';R.t=0;R.go=4.2+Math.random()*0.8;R.lap=1;R.laps=[];R.best=null;R.last=null;R.half=false;R.flash=null;R.finished=false;

@@ -9,7 +9,7 @@ Kør **Hurtig løb** (vælg kører og bane) eller en hel **Sæson** gennem de 10
 ## Sådan spiller du
 - **◀ ▶** nederst til venstre drejer bilen.
 - **GAS** sidder til højre. Slip gassen for at bremse før svingene.
-- Kameraet følger bilen, og en let styrehjælp retter den ind efter vejen.
+- Kameraet følger bilen. Der er ingen styrehjælp – du styrer selv.
 - Sidder bilen fast mod en mur, bakker den selv lidt.
 - Tastatur: piletaster / WASD, ↓ = bak, P = pause.
 
@@ -37,6 +37,7 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - `versioner/` – alle tidligere versioner som selvstændige HTML-filer
 
 ## Versionslog
+- **v0.12** – Styrehjælpen er slået fra.
 - **v0.11** – Kameraet følger altid bilen, og der styres med knapper (nu større). Indstillingerne for kamera, styring og styrehjælp er fjernet. Mere fartfølelse: kameraet zoomer ikke længere ud ved høj fart, der er fartstriber i kanten af skærmen, en let rumlen nær topfart og bremseskilte (3-2-1) før svingene. Knapstyringen er gjort mere tilgivende.
 - **v0.10** – Bløde mure: bilen glider langs muren og mister fart alt efter, hvor stejlt den rammer, men kører videre. Baneafsnit, der ligger tæt (Monaco ved Loews-hårnålen og Mirabeau), overlapper ikke længere. Monaco har lidt smallere gader.
 - **v0.9** – Hovedmenu med Hurtig løb og Sæson, og intet er valgt på forhånd. Banerne følger nu de rigtige layouts tæt (Monacos startlinje er rettet, og hårnålene er åbnet op i stedet for skåret af). Kameraet er zoomet længere ud. Spillet går ikke på pause af sig selv, og banen tegnes uden stop.
