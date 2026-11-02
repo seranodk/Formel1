@@ -37,6 +37,7 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - `versioner/` – alle tidligere versioner som selvstændige HTML-filer
 
 ## Versionslog
+- **v0.17** – Hver bil er lige så hurtig som sin rigtige 2026-bil: holdene følger konstruktørstillingen, og topfarten går fra 350 km/t (Mercedes) til 333 km/t (Cadillac). Ny motorlyd lavet af rigtige F1-optagelser, der skifter tone med gearene, og et rigtigt publikum ved start og mål.
 - **v0.16** – Løbene hedder nu landet som i Formel 1-kalenderen (fx Østrig, Storbritannien, Las Vegas), med banens navn som undertekst – i banevalget, sæsonen, startgrafikken og resultatet.
 - **v0.15** – Bilen er 10 % hurtigere (også i optrækket), mens speedometeret viser det samme. Svingene kan tages med samme km/t som før. Banevalget er gjort kompakt, så alle 10 baner står på én mobilskærm.
 - **v0.14** – Alle baner er 25 % bredere (plads til at overhale) og 12 % større. Monaco og Interlagos er gjort lidt større end de andre, så de tætte afsnit ikke rører hinanden. Svingene er tilpasset den bredere asfalt.
@@ -55,4 +56,6 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - **v0.1** – Første spilbare testbane med fast eller medfølgende kamera.
 
 ## Kilder
+Motorlyden er rigtige F1-optagelser af Edvvc på Wikimedia Commons, licens CC BY-SA 3.0: [Brawn-Mercedes BGP 001 (2009)](https://commons.wikimedia.org/wiki/File:Brawn-Mercedes_BGP_001_(2009).ogg), [Red Bull-Cosworth RB1 (2005)](https://commons.wikimedia.org/wiki/File:Red_Bull-Cosworth_RB1_(2005).ogg) og [Williams-Cosworth FW32 (2010)](https://commons.wikimedia.org/wiki/File:Williams-Cosworth_FW32_(2010).ogg). Publikum: [F1 Race Crowd](https://commons.wikimedia.org/wiki/File:F1-Race-Crowd-Applause-Air-Horns.wav) af WebbFilmsUK, CC BY 4.0. Klippene er trimmet og lavet til løkker af [lights-out](https://github.com/Dhairya-007/lights-out) og beholder deres licenser.
+
 Banernes forløb bygger på [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits) (MIT-licens). Holdfarverne er forenklede bud på 2026-farverne, uden logoer.
