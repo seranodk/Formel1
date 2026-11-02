@@ -4,7 +4,7 @@ Formel 1 set ovenfra i TV-stil – til mobil og browser.
 
 **Spil:** https://seranodk.github.io/Formel1/
 
-Kør **Hurtig løb** (vælg kører og bane) eller en hel **Sæson** gennem alle 23 baner i 2026-kalenderens rækkefølge med alle 22 kørere fra de 11 hold. Banerne er bygget ud fra de rigtige layouts: gadebaner med mure tæt på asfalten og natløb under projektører.
+Kør **Hurtig løb** mod de 21 andre kørere, **Træning** alene mod din egen spøgelsesbil, eller en hel **Sæson** med point og VM-stilling gennem alle 23 baner i 2026-kalenderens rækkefølge med alle 22 kørere fra de 11 hold. Banerne er bygget ud fra de rigtige layouts: gadebaner med mure tæt på asfalten og natløb under projektører.
 
 ## Sådan spiller du
 - **◀ ▶** nederst til venstre drejer bilen.
@@ -37,6 +37,7 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - `versioner/` – alle tidligere versioner som selvstændige HTML-filer
 
 ## Versionslog
+- **v0.21** – Modstandere: de 21 andre kørere starter fra et grid på 22 biler, kører med deres holds rigtige fart og kan overhale hinanden og dig. Slipstrøm bag en bil på langsiderne. Placering live i infobjælken og et lille tidstårn (bilen foran og bagved). Sværhedsgrad under Indstillinger. Resultatliste med point (25-18-15…), og i sæsonen VM-stilling for kørere og konstruktører med pokal efter sidste løb. Ny **Træning**: kør alene med ubegrænsede omgange mod en spøgelsesbil af din bedste omgang på banen, med tidsforskel live.
 - **v0.20** – Alle 23 løb i 2026-kalenderen kan køres. 13 nye baner: Australien, Kina, Miami, Canada, Barcelona, Ungarn, Holland, Spanien (Madring), Aserbajdsjan (Baku), Bahrain (kørt på Sepang), USA (COTA), Mexico og Qatar (natløb). Alle har samme brede bane, så der er plads til at overhale. Sæsonen har nu 23 runder i kalenderens rækkefølge, og en påbegyndt sæson bliver bevaret. Banevalget viser alle 23 baner på én mobilskærm.
 - **v0.19** – Valget *V6 hybrid* er fjernet. Motorlyden er nu de rigtige optagelser som standard, og *Blandet* kan stadig vælges under Indstillinger → Motorlyd.
 - **v0.18** – Ny motorlyd, der efterligner de nyere V6-turbohybridmotorer (2014–2025): V6-tonen ved op til 12.000 omdr./min, turboens fløjt og elmotorens hyl. Under Indstillinger → Motorlyd kan man vælge *V6 hybrid*, *Blandet* (standard, model + rigtige optagelser) eller *Optagelse* (kun de rigtige 2005–2010-optagelser).
