@@ -37,6 +37,7 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - `versioner/` – alle tidligere versioner som selvstændige HTML-filer
 
 ## Versionslog
+- **v0.13** – Tidtagningen ligger nu i en bjælke øverst med pauseknappen ved siden af. Minikort og beskeder ligger lige under bjælken, og styreknapperne er mindre og sidder helt i bunden.
 - **v0.12** – Styrehjælpen er slået fra.
 - **v0.11** – Kameraet følger altid bilen, og der styres med knapper (nu større). Indstillingerne for kamera, styring og styrehjælp er fjernet. Mere fartfølelse: kameraet zoomer ikke længere ud ved høj fart, der er fartstriber i kanten af skærmen, en let rumlen nær topfart og bremseskilte (3-2-1) før svingene. Knapstyringen er gjort mere tilgivende.
 - **v0.10** – Bløde mure: bilen glider langs muren og mister fart alt efter, hvor stejlt den rammer, men kører videre. Baneafsnit, der ligger tæt (Monaco ved Loews-hårnålen og Mirabeau), overlapper ikke længere. Monaco har lidt smallere gader.
