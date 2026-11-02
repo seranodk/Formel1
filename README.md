@@ -37,6 +37,7 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - `versioner/` – alle tidligere versioner som selvstændige HTML-filer
 
 ## Versionslog
+- **v0.18** – Ny motorlyd, der efterligner de nyere V6-turbohybridmotorer (2014–2025): V6-tonen ved op til 12.000 omdr./min, turboens fløjt og elmotorens hyl. Under Indstillinger → Motorlyd kan man vælge *V6 hybrid*, *Blandet* (standard, model + rigtige optagelser) eller *Optagelse* (kun de rigtige 2005–2010-optagelser).
 - **v0.17** – Hver bil er lige så hurtig som sin rigtige 2026-bil: holdene følger konstruktørstillingen, og topfarten går fra 350 km/t (Mercedes) til 333 km/t (Cadillac). Ny motorlyd lavet af rigtige F1-optagelser, der skifter tone med gearene, og et rigtigt publikum ved start og mål.
 - **v0.16** – Løbene hedder nu landet som i Formel 1-kalenderen (fx Østrig, Storbritannien, Las Vegas), med banens navn som undertekst – i banevalget, sæsonen, startgrafikken og resultatet.
 - **v0.15** – Bilen er 10 % hurtigere (også i optrækket), mens speedometeret viser det samme. Svingene kan tages med samme km/t som før. Banevalget er gjort kompakt, så alle 10 baner står på én mobilskærm.
