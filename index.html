@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.21</title>
+<title>Formel 1 v0.22</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.21">
+<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.22">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -96,7 +96,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.21 · sæson 2026</div>
+    <div class="sub">v0.22 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big blue" id="train">TRÆNING<small>Kør alene og jagt din egen bedste omgang</small></button>
@@ -176,7 +176,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.21</div>
+<div class="ver">v0.22</div>
 
 <script>
 "use strict";
@@ -889,7 +889,7 @@ function sectorDone(k){
 // The 21 other drivers. Each AI car moves along the track in track coordinates: s = distance along the
 // centre line (in 6-unit samples, counting up across laps; negative behind the start line) and o = sideways
 // offset. That keeps them on the road and makes overtaking a matter of picking a free lane.
-const AIDIFF={let:0.80,normal:0.87,svaer:0.94};
+const AIDIFF={let:0.87,normal:0.915,svaer:0.965}; // v0.22: 'let' is the old normal, normal a bit better, svær much harder
 const PTS=[25,18,15,12,10,8,6,4,2,1];
 let AIS=[],VA=null,RACEO=null;
 const CARL=78,CARW=40; // car length and width in world units
@@ -917,8 +917,8 @@ function setupField(withAI){
   let mySlot=0;const base=AIDIFF[S.ai]||AIDIFF.normal;
   all.forEach((e,k)=>{
     if(e.id===me){mySlot=k;return;}
-    const P=teamPace(e.team),g=gridSlot(k),top=P.top/KMH0*({let:0.965,normal:0.985}[S.ai]||1); // easier opponents also lift a little earlier on the straights
-    AIS.push({id:e.id,team:e.team,slot:k,s:g.s,o:g.o,v:0,top,acc:0.40*(0.9+0.1*P.n),
+    const P=teamPace(e.team),g=gridSlot(k),top=P.top/KMH0*({let:0.985,normal:0.995}[S.ai]||1); // easier opponents also lift a little earlier on the straights
+    AIS.push({id:e.id,team:e.team,slot:k,s:g.s,o:g.o,v:0,top,acc:0.40*(0.9+0.1*P.n)*(S.ai==="svaer"?1.04:1),
       skill:base+0.05*P.n+(rnd()-0.5)*0.02,react:0.15+rnd()*0.35,passO:null,passT:0,lat:0,fin:null,
       x:0,y:0,a:0,px:undefined,py:0,pa:0,steer:0,dist:rnd()*50});
   });
