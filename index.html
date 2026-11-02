@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.10</title>
+<title>Formel 1 v0.11</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne. Hurtig løb eller en hel sæson på 10 rigtige baner – blandt dem Monaco, Spa, Suzuka og natløbene i Singapore og Las Vegas. v0.10">
+<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne. Hurtig løb eller en hel sæson på 10 rigtige baner – blandt dem Monaco, Spa, Suzuka og natløbene i Singapore og Las Vegas. v0.11">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -79,7 +79,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.10 · sæson 2026</div>
+    <div class="sub">v0.11 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big alt" id="opensettings">Indstillinger</button>
@@ -126,13 +126,10 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov hide" id="settings">
   <div class="card">
     <h2>Indstillinger</h2>
-    <div class="row"><label>Kamera</label><div class="seg" data-k="cam"><button data-v="fixed">Fast</button><button data-v="chase">Følger bilen</button></div></div>
-    <div class="row"><label>Styring</label><div class="seg" data-k="ctrl"><button data-v="stick">Peg-og-kør</button><button data-v="buttons">Knapper</button></div></div>
-    <div class="row"><label>Styrehjælp</label><div class="seg" data-k="hjaelp"><button data-v="fra">Fra</button><button data-v="til">Til</button></div></div>
     <div class="row"><label>Omgange</label><div class="seg" data-k="laps"><button data-v="3">3</button><button data-v="5">5</button><button data-v="10">10</button></div></div>
     <div class="row"><label>Lyd</label><div class="seg" data-k="snd"><button data-v="0">Fra</button><button data-v="1">Til</button></div></div>
     <button class="big" id="closesettings">GEM OG TILBAGE</button>
-    <div class="help"><b>Peg-og-kør:</b> sæt fingeren på venstre side og træk i den retning bilen skal køre. <b>Knapper:</b> ◀ ▶ drejer bilen.<br>GAS sidder til højre. Slip gassen for at bremse før svingene. Peg bagud for at bakke (med knapper bakker bilen selv, hvis den sidder fast).<br><b>Styrehjælp:</b> retter bilen en smule ind efter vejen, når du ikke styrer hårdt.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.</div>
+    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen, og en let styrehjælp retter den ind efter vejen.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.</div>
   </div>
 </div>
 
@@ -155,7 +152,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.10</div>
+<div class="ver">v0.11</div>
 
 <script>
 "use strict";
@@ -179,7 +176,7 @@ let S={...DEF};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('f1set')||'{}')); }catch(e){}
 S.fart='normal';S.auto='0'; // removed from settings in v0.4
 if(!['rbr','mon','sil','spa','mza','suz','sgp','lvg','bra','abu'].includes(S.bane))S.bane='rbr';
-if(S.hjaelp!=='fra')S.hjaelp='til'; // v0.5: assist is just on/off
+S.cam='chase';S.ctrl='buttons';S.hjaelp='til'; // v0.11: camera follows the car, button steering, light steering assist always on
 function saveS(){ try{ localStorage.setItem('f1set',JSON.stringify(S)); }catch(e){} }
 function team(){return TEAMS.find(t=>t.id===S.team)||TEAMS[0];}
 function driver(){const t=team();return t.d[+S.drv===1?1:0];}
@@ -253,7 +250,7 @@ function resample(pts,step){
   }
   out.pop();return out;
 }
-let GRAV_RUNS=[],KERB_RUNS=[],RACE=[],CROSS=null,LIGHTS=[],BLD=[],STANDS=[];
+let GRAV_RUNS=[],KERB_RUNS=[],RACE=[],CROSS=null,LIGHTS=[],BLD=[],STANDS=[],BOARDS=[];
 let TRK=null,center=[],N=0,TAN=[],NOR=[],CURV=[],LIMP,LIMM,gravel=[],BB,CHUNKS=[],TYRES=[],TREES=[];
 function off(i,o){const c=center[i],n=NOR[i];return [c[0]+n[0]*o,c[1]+n[1]*o];}
 const idxDist=(a,b)=>{const d=Math.abs(a-b)%N;return Math.min(d,N-d);};
@@ -429,6 +426,12 @@ function loadTrack(id){
     if(T.city&&BLD.some(b=>x>b[0]-r&&x<b[0]+b[2]+r&&y>b[1]-r&&y<b[1]+b[3]+r))continue;
     TREES.push([x,y,r]);
   }
+  BOARDS=[];
+  for(let i=0;i<N;i++){ // start of each slow corner: |curvature| rises above 1/170 after a calmer stretch
+    if(Math.abs(CURV[i])<1/170||CROSS[i])continue;let calm=true;for(let k=1;k<=60;k++)if(Math.abs(CURV[(i-k+N)%N])>1/300){calm=false;break;}
+    if(!calm)continue;const sd=CURV[i]>0?-1:1; // boards on the outside of the corner
+    for(const [d,n] of [[50,3],[100,2],[150,1]]){const j=(i-d+N)%N;const lim=sd>0?LIMP[j]:LIMM[j];if(lim<HALF+30||CROSS[j])continue;const p=off(j,sd*(Math.min(lim,HALF+60)-4));BOARDS.push([p[0],p[1],Math.atan2(TAN[j][1],TAN[j][0]),n]);}
+  }
   STANDS=[];
   {const a=Math.atan2(TAN[0][1],TAN[0][0]),n=NOR[0],c0=center[0];
    for(const [offs,len,col] of [[-(LIMM[0]+60),640,'#2f3a4a'],[LIMP[0]+60,560,'#c03a2b']]){
@@ -489,6 +492,9 @@ function drawWorld(c,vx0,vy0,vx1,vy1){
       c.fillStyle='rgba(255,255,255,.12)';c.fillRect(b[0]+10,b[1]+10,b[2]-20,b[3]-20);
       c.fillStyle='rgba(0,0,0,.18)';c.fillRect(b[0]+b[2]*0.2,b[1]+b[3]*(0.25+b[5]*0.3),b[2]*0.22,b[3]*0.18);}
   }
+  // braking boards
+  for(const b of BOARDS)if(ptIn(b[0],b[1],30)){c.save();c.translate(b[0],b[1]);c.rotate(b[2]+Math.PI/2);
+    c.fillStyle='rgba(0,0,0,.3)';c.fillRect(-13,-8,30,20);c.fillStyle='#fff';c.fillRect(-15,-10,30,20);c.fillStyle='#111';c.font='900 16px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(b[3],0,1);c.restore();}
   // trees (palms in the desert)
   const tv=near(BK.t,vx0,vy0,vx1,vy1).filter(t=>ptIn(t[0],t[1],t[2]+14));
   if(T.env==='desert'){
@@ -607,7 +613,7 @@ function drawF1(c,L,num,steer,roll,helmet){
 
 // ---- tuning (v0.2) ----
 const FART={rolig:{vmax:500,kmh:250},normal:{vmax:670,kmh:300},hurtig:{vmax:800,kmh:330}};
-const TUNE={grip:600,rmin:80,yawCap:2.0,acc:0.42,brk:1.5,steerRamp:4,steerRet:9,stickGain:2.6,stickRate:10};
+const TUNE={grip:600,rmin:80,yawCap:2.0,acc:0.42,brk:1.5,steerRamp:4,steerRet:9,stickGain:2.6,stickRate:10,assist:1.6,btnCap:0.75};
 let VMAX=620,KMH=0.5;
 function applyFart(){const f=FART[S.fart]||FART.normal;VMAX=f.vmax;KMH=f.kmh/f.vmax;buildVlim();}
 // safe speed along the track (used by the "Meget" assist to brake for you before corners)
@@ -640,11 +646,11 @@ function nearest(full){
 const inp={gas:0,brake:0,steer:0,stick:null,keys:{}};
 const ptr=new Map(); // id -> {role,x0,y0,x,y}
 function L(){ // control layout in CSS px
-  const s=U,m=14*s,bot=H-SAB-66*s-6*s-14*s;
-  const bw=Math.min(86*s,(W-5*m)/4);
-  const gh=Math.min(128*s,bw*1.5),bh=Math.min(96*s,bw*1.15),sh=Math.min(100*s,bw*1.2);
+  const s=U,m=12*s,bot=H-SAB-66*s-6*s-14*s;
+  const bw=Math.min(104*s,(W-4*m)/3.35);          // steering buttons: a bit bigger than before
+  const sh=Math.min(124*s,bw*1.2),gw=Math.min(112*s,bw*1.1),gh=Math.min(158*s,gw*1.45);
   return {
-    gas:{x:W-m-bw*1.25,y:bot-gh*1.15,w:bw*1.25,h:gh*1.15},
+    gas:{x:W-m-gw,y:bot-gh,w:gw,h:gh},
     left:{x:m,y:bot-sh,w:bw,h:sh},
     right:{x:2*m+bw,y:bot-sh,w:bw,h:sh},
     pause:{x:10*s,y:10*s+SAT,w:44*s,h:38*s},
@@ -696,7 +702,7 @@ function readInput(dt){
   if(steerRel!==0){
     // buttons/keys: steering builds up progressively (a short tap = a small correction), lets go fast
     const tgt=Math.max(-1,Math.min(1,steerRel));
-    toward(tgt, car.steer*tgt<0?TUNE.steerRet:TUNE.steerRamp);
+    toward(tgt*(Math.abs(car.v)>VMAX*0.5?TUNE.btnCap:1), car.steer*tgt<0?TUNE.steerRet:TUNE.steerRamp);
   }else if(stick&&stick.l>0.25){
     // point-and-drive: ask for a yaw rate proportional to the angle error → no overshoot
     // the stick points where you want to go on screen (works the same with both cameras)
@@ -762,7 +768,7 @@ function physics(dt){
   const wmax=wmaxG(sp,grip);
   car.a+=car.steer*wmax*Math.sign(v)*dt;
   // steering assist: gently lines the car up with the road when you are not steering hard
-  const AS=S.hjaelp==='til'?0.9:0;
+  const AS=S.hjaelp==='til'?TUNE.assist:0;
   if(AS&&surf==='track'&&v>40){
     const j=(car.idx+8)%N,th=Math.atan2(TAN[j][1],TAN[j][0]);
     let e=th-car.a;while(e>Math.PI)e-=2*Math.PI;while(e<-Math.PI)e+=2*Math.PI;
@@ -854,7 +860,7 @@ function camUpdate(dt,snap){
   syncRP();
   const sp=Math.abs(car.v);
   const baseZ=Math.min(W,H)/(S.cam==='chase'?640:680);
-  const zt=baseZ*(1.12-0.32*Math.min(1,sp/VMAX));
+  const zt=baseZ*1.0; // constant zoom: zooming out at speed hid how fast the car goes
   if(S.cam==='chase'){
     const want=-RP.a-Math.PI/2;
     let d=want-cam.rot;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
@@ -923,9 +929,10 @@ function prefetch(x0,y0,x1,y1,budget){
 function render(){
   g.setTransform(DPR,0,0,DPR,0,0);
   g.fillStyle='#3f8a3a';g.fillRect(0,0,W,H);
-  const sx=(bump>0?(Math.random()-.5)*8*bump:0),sy=(bump>0?(Math.random()-.5)*8*bump:0);
+  const hs=Math.max(0,Math.abs(car.v)/VMAX-0.75)*2.2; // faint rumble near top speed
+  const sx=(bump>0?(Math.random()-.5)*8*bump:0)+(Math.random()-.5)*hs,sy=(bump>0?(Math.random()-.5)*8*bump:0)+(Math.random()-.5)*hs;
   g.save();
-  const cy=S.cam==='chase'?H*0.60:H*0.45;
+  const cy=S.cam==='chase'?H*(0.58+0.07*Math.min(1,Math.abs(car.v)/VMAX)):H*0.45;
   g.translate(W/2+sx,cy+sy);g.scale(cam.z,cam.z);g.rotate(cam.rot);g.translate(-cam.x,-cam.y);
   { // visible world rectangle (covers the rotated view)
     if(S.cam==='chase'){const r=Math.hypot(W,Math.max(cy,H-cy)*2)/2/cam.z+30;VR=r;drawTiles(cam.x-r,cam.y-r,cam.x+r,cam.y+r);}
@@ -935,10 +942,28 @@ function render(){
   g.save();g.translate(RP.x+6,RP.y+7);g.rotate(RP.a+RP.slip);g.fillStyle='rgba(0,0,0,.35)';rr(g,-29,-13,58,26,9);g.fill();g.restore();
   {const T=team(),D=driver();g.save();g.translate(RP.x,RP.y);g.rotate(RP.a+RP.slip);g.scale(1.68,1.68);drawF1(g,T,D[2],car.steer,(car.dist||0)/1.5,D[3]);g.restore();}
   g.restore();
+  speedLines();
   hud();
   controls();
 }
 
+// streaks rushing past the edges of the screen – they grow with speed so 300 km/h feels different from 100
+const STREAK=[];for(let i=0;i<46;i++)STREAK.push([Math.random(),Math.random(),0.4+Math.random()*0.6]);
+function speedLines(){
+  if(R.state!=='race'&&R.state!=='done')return;
+  const k=Math.abs(car.v)/VMAX;if(k<0.3)return;
+  const a=Math.min(1,(k-0.3)/0.6),t=performance.now()/1000,sp=k*k;
+  g.save();g.lineCap='round';
+  for(const [u,ph,len] of STREAK){
+    // only along the left/right edges of the screen, away from the car and the road ahead
+    const e=u<0.5?u*2:(u-0.5)*2,x=u<0.5?e*W*0.13:W-e*W*0.13;
+    const y=((ph+t*(1.4+2.4*sp)*len)%1)*(H+160)-80,L=(26+90*sp)*len*U;
+    const gr=g.createLinearGradient(x,y,x,y+L);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(1,`rgba(255,255,255,${(0.10+0.22*len)*a*(1-e*0.6)})`);
+    g.strokeStyle=gr;g.lineWidth=(1.4+1.6*len)*U;
+    g.beginPath();g.moveTo(x,y);g.lineTo(x,y+L);g.stroke();
+  }
+  g.restore();
+}
 function panel(x,y,w,h,r){g.fillStyle='rgba(15,15,20,.86)';rr(g,x,y,w,h,r);g.fill();}
 // layout of the bottom info bar (everything the driver doesn't need while steering lives down here)
 function barRect(){const s=U,h=66*s;return {x:8*s,y:H-SAB-h-6*s,w:W-16*s,h};}
@@ -984,7 +1009,7 @@ function hud(){
   const l=L(),pw=Math.max(200*s,l.gas.x-bx-10*s),px=bx;
   if(R.pop&&R.t-R.pop.t<2.6&&!(R.banner&&R.t-R.banner.t<4)){
     const a=Math.min(1,(2.6-(R.t-R.pop.t))*3);g.globalAlpha=a;
-    const py=by-42*s,w=Math.min(pw,230*s);
+    const py=L().left.y-42*s,w=Math.min(pw,230*s);
     panel(px,py,w,34*s,8*s);
     g.fillStyle=COL[R.pop.col];rr(g,px,py,74*s,34*s,[8*s,0,0,8*s]);g.fill();
     g.fillStyle=R.pop.col==='y'?'#111':'#fff';g.textAlign='center';g.font=`900 ${11*s}px system-ui`;g.fillText('SEKTOR '+(R.pop.k+1),px+37*s,py+14*s);
@@ -996,7 +1021,7 @@ function hud(){
   }
   const lowerThird=(alpha,left,line1,line2,right,rightCol,tag,tagCol)=>{
     g.globalAlpha=alpha;
-    const w=Math.min(pw,330*s),x=px,h=52*s,y=by-h-8*s;
+    const w=Math.min(pw,330*s),x=px,h=52*s,y=L().left.y-h-8*s;
     panel(x,y,w,h,8*s);
     g.fillStyle=T.p;rr(g,x,y,44*s,h,[8*s,0,0,8*s]);g.fill();
     g.fillStyle=lum(T.p)>0.6?'#111':'#fff';g.textAlign='center';g.font=`900 italic ${19*s}px system-ui`;g.fillText(left,x+22*s,y+33*s);
@@ -1048,7 +1073,7 @@ function gear(){const k=Math.abs(car.v)/VMAX;return String(Math.max(1,Math.min(8
 function btn(r,label,on,col){
   g.fillStyle=on?col:'rgba(15,15,20,.55)';rr(g,r.x,r.y,r.w,r.h,14*U);g.fill();
   g.strokeStyle=on?'#fff':'rgba(255,255,255,.35)';g.lineWidth=2*U;g.stroke();
-  g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.font=`900 ${label.length>2?17*U:30*U}px system-ui,sans-serif`;
+  g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.font=`900 ${label.length>2?19*U:38*U}px system-ui,sans-serif`;
   g.fillText(label,r.x+r.w/2,r.y+r.h/2);g.textBaseline='alphabetic';
 }
 function controls(){
@@ -1103,6 +1128,7 @@ function audioTick(){
 // ================= Flow =================
 const $=id=>document.getElementById(id);
 function startRace(){
+  S.cam='chase';S.ctrl='buttons';S.hjaelp='til';
   loadTrack(S.bane);
   applyFart();
   R.state='race';R.t=0;R.go=4.2+Math.random()*0.8;R.lap=1;R.laps=[];R.best=null;R.last=null;R.half=false;R.flash=null;R.finished=false;
