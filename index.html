@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.14</title>
+<title>Formel 1 v0.15</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne. Hurtig løb eller en hel sæson på 10 rigtige baner – blandt dem Monaco, Spa, Suzuka og natløbene i Singapore og Las Vegas. v0.14">
+<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne. Hurtig løb eller en hel sæson på 10 rigtige baner – blandt dem Monaco, Spa, Suzuka og natløbene i Singapore og Las Vegas. v0.15">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -54,11 +54,13 @@ h2{margin:0 0 6px;font-size:24px;font-weight:900;font-style:italic}
 .pick div{display:flex;align-items:center;gap:10px;background:#24262c;border-radius:10px;padding:9px 10px;font-size:14px;font-weight:700}
 .pick small{display:block;color:#a9adb5;font-weight:600;font-size:12px}
 .pick i{width:8px;align-self:stretch;border-radius:4px}
-.tracks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0 2px}
-.tracks button{border:2px solid transparent;border-radius:10px;background:#24262c;color:#fff;padding:6px;cursor:pointer;text-align:left;font:700 13px system-ui,sans-serif}
+.tracks{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:6px 0 2px}
+.tracks button{border:2px solid transparent;border-radius:9px;background:#24262c;color:#fff;padding:4px 6px 5px;cursor:pointer;text-align:left;font:700 12.5px system-ui,sans-serif;display:grid;grid-template-columns:54px 1fr;gap:0 7px;align-items:center;min-width:0}
 .tracks button.on{border-color:#fff}
-.tracks canvas{display:block;width:100%;height:auto;border-radius:6px;margin-bottom:5px}
-.tracks small{display:block;color:#a9adb5;font-weight:600;font-size:11px;margin-top:1px}
+.tracks canvas{display:block;width:54px;height:40px;border-radius:5px;grid-row:span 2}
+.tracks span.nm{line-height:1.15;min-width:0;overflow-wrap:anywhere}
+.tracks small{display:block;color:#a9adb5;font-weight:600;font-size:10.5px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tracks .tag{font-size:8px;padding:1px 4px;margin:0 3px 0 0}
 .tag{display:inline-block;font:800 9px system-ui;letter-spacing:.5px;padding:2px 5px;border-radius:4px;margin:4px 4px 0 0;background:#3a4150;color:#fff}
 .tag.n{background:#2b3a8f}.tag.c{background:#6b6f78}
 .teams{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 4px}
@@ -79,7 +81,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.14 · sæson 2026</div>
+    <div class="sub">v0.15 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big alt" id="opensettings">Indstillinger</button>
@@ -152,7 +154,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.14</div>
+<div class="ver">v0.15</div>
 
 <script>
 "use strict";
@@ -613,8 +615,8 @@ function drawF1(c,L,num,steer,roll,helmet){
 }
 
 // ---- tuning (v0.2) ----
-const FART={rolig:{vmax:500,kmh:250},normal:{vmax:670,kmh:300},hurtig:{vmax:800,kmh:330}};
-const TUNE={grip:600,rmin:80,yawCap:2.0,acc:0.42,brk:1.5,steerRamp:4,steerRet:9,stickGain:2.6,stickRate:10,assist:1.6,btnCap:0.75};
+const FART={rolig:{vmax:500,kmh:250},normal:{vmax:737,kmh:300},hurtig:{vmax:800,kmh:330}};
+const TUNE={grip:726,rmin:80,yawCap:2.2,acc:0.462,brk:1.5,steerRamp:4,steerRet:9,stickGain:2.6,stickRate:10,assist:1.6,btnCap:0.75};
 let VMAX=620,KMH=0.5;
 function applyFart(){const f=FART[S.fart]||FART.normal;VMAX=f.vmax;KMH=f.kmh/f.vmax;buildVlim();}
 // safe speed along the track (used by the "Meget" assist to brake for you before corners)
@@ -1159,16 +1161,16 @@ function showFinish(){
 function show(id){['menu','pdriver','ptrack','seasonov','settings','pause','finish'].forEach(k=>$(k).classList.toggle('hide',k!==id));}
 function buildTrackPicker(){
   const box=$('tracks');
-  box.innerHTML=TRACK_ORDER.map(k=>{const t=TRACKS[k];return `<button data-k="${k}" class="${k===SEL.bane?'on':''}"><canvas width="300" height="170" data-k="${k}"></canvas>${t.name}<small>${t.land} · ${t.km.toFixed(3).replace('.',',')} km</small>${t.city?'<span class="tag c">GADEBANE</span>':''}${t.night?'<span class="tag n">NATLØB</span>':''}</button>`;}).join('');
+  box.innerHTML=TRACK_ORDER.map(k=>{const t=TRACKS[k];return `<button data-k="${k}" class="${k===SEL.bane?'on':''}"><canvas width="162" height="120" data-k="${k}"></canvas><span class="nm">${t.name.replace('Spa-Francorchamps','Spa')}</span><small>${t.city?'<span class="tag c">GADE</span>':''}${t.night?'<span class="tag n">NAT</span>':''}${t.land}</small></button>`;}).join('');
   box.querySelectorAll('canvas').forEach(cv2=>{const t=TRACKS[cv2.dataset.k],o=cv2.getContext('2d');
     const bg=t.night?'#141c3a':{park:'#3f8a3a',forest:'#2f6a2c',desert:'#cdb98d',city:'#7a7f86'}[t.env];
-    o.fillStyle=bg;o.fillRect(0,0,300,170);
+    o.fillStyle=bg;o.fillRect(0,0,162,120);
     let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const q of t.pts){x0=Math.min(x0,q[0]);x1=Math.max(x1,q[0]);y0=Math.min(y0,q[1]);y1=Math.max(y1,q[1]);}
-    const sc=Math.min(270/(x1-x0),140/(y1-y0)),ox=(300-(x1-x0)*sc)/2,oy=(170-(y1-y0)*sc)/2;
+    const sc=Math.min(142/(x1-x0),100/(y1-y0)),ox=(162-(x1-x0)*sc)/2,oy=(120-(y1-y0)*sc)/2;
     o.lineJoin='round';o.beginPath();t.pts.forEach((q,i)=>{const X=ox+(q[0]-x0)*sc,Y=oy+(q[1]-y0)*sc;i?o.lineTo(X,Y):o.moveTo(X,Y);});o.closePath();
-    if(t.night){o.strokeStyle='rgba(255,236,190,.35)';o.lineWidth=14;o.stroke();}
-    o.strokeStyle='#2a2d33';o.lineWidth=9;o.stroke();o.strokeStyle='#fff';o.lineWidth=4;o.stroke();
-    const q=t.pts[0];o.fillStyle='#d71f26';o.fillRect(ox+(q[0]-x0)*sc-4,oy+(q[1]-y0)*sc-8,8,16);});
+    if(t.night){o.strokeStyle='rgba(255,236,190,.35)';o.lineWidth=12;o.stroke();}
+    o.strokeStyle='#2a2d33';o.lineWidth=9;o.stroke();o.strokeStyle='#fff';o.lineWidth=4.5;o.stroke();
+    const q=t.pts[0];o.fillStyle='#d71f26';o.fillRect(ox+(q[0]-x0)*sc-4,oy+(q[1]-y0)*sc-7,8,14);});
   box.querySelectorAll('button').forEach(b=>b.onclick=()=>{SEL.bane=b.dataset.k;box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));$('startrace').disabled=false;});
   $('startrace').disabled=!SEL.bane;
 }

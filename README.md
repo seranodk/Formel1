@@ -37,6 +37,7 @@ Sektortider vises i TV-farverne: **lilla** er ny banerekord, **grøn** er person
 - `versioner/` – alle tidligere versioner som selvstændige HTML-filer
 
 ## Versionslog
+- **v0.15** – Bilen er 10 % hurtigere (også i optrækket), mens speedometeret viser det samme. Svingene kan tages med samme km/t som før. Banevalget er gjort kompakt, så alle 10 baner står på én mobilskærm.
 - **v0.14** – Alle baner er 25 % bredere (plads til at overhale) og 12 % større. Monaco og Interlagos er gjort lidt større end de andre, så de tætte afsnit ikke rører hinanden. Svingene er tilpasset den bredere asfalt.
 - **v0.13** – Tidtagningen ligger nu i en bjælke øverst med pauseknappen ved siden af. Minikort og beskeder ligger lige under bjælken, og styreknapperne er mindre og sidder helt i bunden.
 - **v0.12** – Styrehjælpen er slået fra.
