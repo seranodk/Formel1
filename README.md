@@ -2,7 +2,7 @@
 
 Formel 1 set ovenfra i TV-stil – til mobil og browser.
 
-**Spil:** https://seranodk.github.io/formel1/
+**Spil:** https://seranodk.github.io/Formel1/
 
 Kør med alle 22 kørere fra de 11 hold i 2026-sæsonen på 10 rigtige baner. Banerne er bygget ud fra de rigtige layouts: gadebaner med mure tæt på asfalten og natløb under projektører.
 
