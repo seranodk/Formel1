@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.18</title>
+<title>Formel 1 v0.19</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne og rigtig motorlyd. Hurtig løb eller en hel sæson i 10 lande fra 2026-kalenderen – blandt dem Monaco, Belgien, Japan og natløbene i Singapore og Las Vegas. v0.18">
+<meta name="description" content="Formel 1 ovenfra med alle 2026-holdene og -kørerne og rigtig motorlyd. Hurtig løb eller en hel sæson i 10 lande fra 2026-kalenderen – blandt dem Monaco, Belgien, Japan og natløbene i Singapore og Las Vegas. v0.19">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -81,7 +81,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.18 · sæson 2026</div>
+    <div class="sub">v0.19 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big alt" id="opensettings">Indstillinger</button>
@@ -129,10 +129,10 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
   <div class="card">
     <h2>Indstillinger</h2>
     <div class="row"><label>Omgange</label><div class="seg" data-k="laps"><button data-v="3">3</button><button data-v="5">5</button><button data-v="10">10</button></div></div>
-    <div class="row"><label>Motorlyd</label><div class="seg" data-k="motor"><button data-v="v6">V6 hybrid</button><button data-v="mix">Blandet</button><button data-v="rec">Optagelse</button></div></div>
+    <div class="row"><label>Motorlyd</label><div class="seg" data-k="motor"><button data-v="rec">Optagelse</button><button data-v="mix">Blandet</button></div></div>
     <div class="row"><label>Lyd</label><div class="seg" data-k="snd"><button data-v="0">Fra</button><button data-v="1">Til</button></div></div>
     <button class="big" id="closesettings">GEM OG TILBAGE</button>
-    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen. Der er ingen styrehjælp – du styrer selv.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.<br><br><b>Motorlyd:</b> <i>V6 hybrid</i> er en model af 2014–2025-motorerne (V6 med turbo og elmotor ved 10.500–12.000 omdr./min). <i>Optagelse</i> er rigtige F1-biler fra 2005–2010, og <i>Blandet</i> lægger de to sammen.<br><b>Lyd:</b> rigtige F1-optagelser af Edvvc (Brawn-Mercedes BGP 001, Red Bull-Cosworth RB1, Williams-Cosworth FW32), Wikimedia Commons, CC BY-SA 3.0. Publikum: WebbFilmsUK, CC BY 4.0. Klippet til løkker af lights-out-projektet.</div>
+    <div class="help"><b>◀ ▶</b> nederst til venstre drejer bilen, og <b>GAS</b> sidder til højre. Slip gassen for at bremse før svingene. Sidder bilen fast mod en mur, bakker den selv lidt.<br>Kameraet følger bilen. Der er ingen styrehjælp – du styrer selv.<br>Tastatur: piletaster / WASD, ↓ = bak, P = pause.<br><br><b>Motorlyd:</b> <i>Optagelse</i> er rigtige F1-biler fra 2005–2010. <i>Blandet</i> lægger en model af de nyere V6-turbohybridmotorer (2014–2025) oveni.<br><b>Lyd:</b> rigtige F1-optagelser af Edvvc (Brawn-Mercedes BGP 001, Red Bull-Cosworth RB1, Williams-Cosworth FW32), Wikimedia Commons, CC BY-SA 3.0. Publikum: WebbFilmsUK, CC BY 4.0. Klippet til løkker af lights-out-projektet.</div>
   </div>
 </div>
 
@@ -155,7 +155,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.18</div>
+<div class="ver">v0.19</div>
 
 <script>
 "use strict";
@@ -174,9 +174,10 @@ const TEAMS=[
  {id:'aud',name:'Audi',p:'#9ca3a9',s:'#1a1a1a',a:'#f50537',d:[['Nico Hülkenberg','HUL',27,'#ececec'],['Gabriel Bortoleto','BOR',5,'#00a651']]},
  {id:'cad',name:'Cadillac',p:'#141414',s:'#f2f2f2',a:'#c9a24a',d:[['Sergio Pérez','PER',11,'#1f4ed8'],['Valtteri Bottas','BOT',77,'#7cc4ff']]}
 ];
-const DEF={cam:'fixed',ctrl:'stick',auto:'0',laps:'3',snd:'1',fart:'normal',hjaelp:'til',bane:'rbr',team:'mcl',drv:'0',motor:'mix'};
+const DEF={cam:'fixed',ctrl:'stick',auto:'0',laps:'3',snd:'1',fart:'normal',hjaelp:'til',bane:'rbr',team:'mcl',drv:'0',motor:'rec'};
 let S={...DEF};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('f1set')||'{}')); }catch(e){}
+if(S.mv!=='19'){S.motor='rec';S.mv='19';} // v0.19: the recordings are the default again, and the V6-only option is gone
 S.fart='normal';S.auto='0'; // removed from settings in v0.4
 if(!['rbr','mon','sil','spa','mza','suz','sgp','lvg','bra','abu'].includes(S.bane))S.bane='rbr';
 S.cam='chase';S.ctrl='buttons';S.hjaelp='fra'; // v0.12: camera follows the car, button steering, no steering assist
@@ -1206,7 +1207,7 @@ function playCrowd(vol){if(!AC||!SB.crowd||S.snd!=='1')return;const s2=AC.create
 function engineState(){
   const k=Math.abs(car.v)/VMAX,gearF=k*8.4,frac=gearF-Math.floor(gearF);
   const rpmN=R.t<R.go?(0.18+0.35*inp.gas):(Math.floor(gearF)>=1?0.42+0.58*frac:0.25+0.6*Math.min(1,gearF));
-  return {rpmN,thr:R.finished?0.2:(inp.gas?1:0.15),k,gear:Math.max(1,Math.ceil(gearF)),merc:MERC_PU.includes(S.team),mode:S.motor||'mix'};
+  return {rpmN,thr:R.finished?0.2:(inp.gas?1:0.15),k,gear:Math.max(1,Math.ceil(gearF)),merc:MERC_PU.includes(S.team),mode:S.motor==='mix'?'mix':'rec'};
 }
 function audioTick(){
   if(!AC||!EN)return;
