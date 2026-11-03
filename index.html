@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.24</title>
+<title>Formel 1 v0.25</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.24">
+<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.25">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -96,7 +96,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.24 · sæson 2026</div>
+    <div class="sub">v0.25 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big blue" id="train">TRÆNING<small>Kør alene og jagt din egen bedste omgang</small></button>
@@ -176,7 +176,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.24</div>
+<div class="ver">v0.25</div>
 
 <script>
 "use strict";
@@ -921,7 +921,7 @@ function sectorDone(k){
 const AIDIFF={let:1.16,normal:0.995,svaer:0.965}; // × that lap time
 const PTS=[25,18,15,12,10,8,6,4,2,1];
 let AIS=[],VA=null,RACEO=null;
-const CARL=78,CARW=40; // car length and width in world units
+const CARL=82,CARW=44; // car length and width in world units
 const dkey=(t,d)=>t+d;              // driver id: team id + driver index, e.g. 'mcl0'
 function drvOf(id){const T=TEAMS.find(t=>t.id===id.slice(0,-1));return {T,D:T.d[+id.slice(-1)]};}
 function wrapD(a,b){return ((a-b)%N+N*1.5)%N-N/2;} // signed distance a-b in samples, the short way round
@@ -940,7 +940,7 @@ function aiLapTime(m,top,acc){
   let v=VA[0]*m,t=0;const dt=1/60;
   for(let s0=0;s0<N*2;){const i=Math.floor(s0)%N,vt=Math.min(top,VA[(i+2)%N]*m);
     if(v<vt)v=Math.min(vt,v+top*acc*(1-(v/top)**2)*dt);else v=Math.max(vt,v-(top*0.12+v*0.6)*dt*1.15);
-    s0+=v*dt/6;if(s0>=N)t+=dt;if(t>400)break;}
+    s0+=v*dt/(6*laneF(i,RACEO[i]));if(s0>=N)t+=dt;if(t>400)break;}
   return t;
 }
 // the corner factor that gives a flying lap of T seconds
@@ -966,7 +966,7 @@ function setupField(withAI){
     if(e.id===me){mySlot=k;return;}
     const P=teamPace(e.team),g=gridSlot(k),top=P.top/KMH0; // easier opponents also lift a little earlier on the straights
     AIS.push({id:e.id,team:e.team,slot:k,s:g.s,o:g.o,v:0,top,acc:0.40*(0.9+0.1*P.n),
-      skill:mTop*(0.955+0.045*P.n)+(rnd()-0.5)*0.012,react:0.15+rnd()*0.35,passO:null,passT:0,lat:0,fin:null,
+      skill:mTop*(0.955+0.045*P.n)+(rnd()-0.5)*0.012,react:0.15+rnd()*0.35,passO:null,passT:0,lat:0,fin:null,aggr:rnd(),seed:1+Math.floor(rnd()*2e9),err:0,errO:0,
       x:0,y:0,a:0,px:undefined,py:0,pa:0,steer:0,dist:rnd()*50});
   });
   for(const c of AIS)aiPose(c);
@@ -984,71 +984,98 @@ function playerS(){
   let s=i+fr;if(!R.half&&i>N*0.5)s-=N; // still before the line on this lap
   return (R.finished?R.lapsTotal:R.lap-1)*N+s;
 }
+// how much longer (>1) or shorter (<1) a lane at offset o is than the centre line at sample i:
+// on the inside of a corner the road is shorter, on the outside longer
+function laneF(i,o){return Math.max(0.35,Math.min(1.8,1-o*CURV[((i%N)+N)%N]));}
+// which way the next corners go: + = towards +o, − = towards −o (sum of curvature 120–720 units ahead)
+function cornerSide(i){let k=0;for(let d=20;d<120;d+=4)k+=CURV[(i+d)%N];return Math.abs(k)<0.012?0:Math.sign(k);}
 function aiStep(dt){
   if(!AIS.length)return;
-  const racing=R.t>=R.go,ps=playerS(),pv=car.v;
-  // every car as an obstacle: {s, o, v, ai}
+  const racing=R.t>=R.go,ps=playerS(),pv=car.v,L=HALF-24;
+  // every car on track: {s, o, v, c (null = you)}
   const obs=AIS.map(c=>({s:c.s,o:c.o,v:c.v,c}));obs.push({s:ps,o:car.o,v:pv,c:null});
   R.tow=0;
   for(const c of AIS){
     c.px=c.x;c.py=c.y;c.pa=c.a;
     if(!racing||R.t<R.go+c.react){aiPose(c);continue;}
     const i=((Math.floor(c.s)%N)+N)%N;
-    // target speed: corner limit ahead × this driver's skill, the car's own top speed
     let vt=Math.min(c.fin!=null?135/KMH0:c.top,VA[(i+2)%N]*c.skill);
-    let tow=1;
-    // look at the cars ahead
-    let blk=null,bd=1e9;const look=(CARL+20+c.v*0.35)/6;
-    for(const q of obs){if(q.c===c)continue;const ds=wrapD(q.s,c.s);
-      if(ds>0&&ds<look&&Math.abs(q.o-c.o)<CARW+12&&ds<bd){bd=ds;blk=q;}
-      if(ds>CARL/6&&ds<260/6&&Math.abs(q.o-c.o)<34)tow=1.035;} // slipstream behind another car
-    vt=Math.min(c.top*tow,vt*(tow>1?1.01:1));
-    // lane choice: racing line, or a passing lane around a slower car
-    let to=RACEO[(i+10)%N];
-    if(blk&&blk.v<vt*0.995&&c.v>blk.v-30){
-      if(c.passO==null||R.t>c.passT){
-        let best=null,bs=1e9;
-        for(const sd of [-1,1]){const lane=blk.o+sd*(CARW+26);if(Math.abs(lane)>HALF-24)continue;
-          let free=true;for(const q of obs){if(q.c===c||q===blk)continue;const ds=wrapD(q.s,c.s);if(ds>-CARL/6&&ds<look+CARL/6&&Math.abs(q.o-lane)<CARW+8){free=false;break;}}
-          if(!free)continue;const sc=Math.abs(lane-to)+Math.abs(lane-c.o)*0.5;if(sc<bs){bs=sc;best=lane;}}
-        c.passO=best;c.passT=R.t+1.2;
-      }
-    }else if(c.passO!=null&&R.t>c.passT)c.passO=null;
-    if(c.passO!=null)to=c.passO;
-    // can't get past yet: follow at a safe distance
-    if(blk&&Math.abs(blk.o-c.o)<CARW+4){const gap=bd*6-CARL;vt=Math.min(vt,Math.max(0,blk.v+gap*1.6-20));}
+    // off the racing line the corner is tighter on the inside: slower there (that is the price of a dive down the inside)
+    {const j=(i+3)%N,fr=laneF(j,c.o)/laneF(j,RACEO[j]);if(fr<1)vt=Math.min(vt,VA[j]*c.skill*Math.sqrt(fr));}
+    // --- the cars around: real distance along the road (the inside of a corner is shorter) and sideways gap
+    let blk=null,bg=1e9,tow=1;const near=[];const look=CARL+30+c.v*0.45;
+    for(const q of obs){if(q.c===c)continue;const d=wrapD(q.s,c.s);if(Math.abs(d)>110)continue;
+      const g=d*6*laneF(i,(q.o+c.o)/2),dO=q.o-c.o;
+      if(Math.abs(g)<CARL+30)near.push({q,g,dO});                                 // beside us
+      if(g>0&&g<look&&Math.abs(dO)<CARW+10&&g<bg){bg=g;blk=q;}                     // in the way ahead
+      if(g>CARL&&g<300&&Math.abs(dO)<36)tow=1.035;}                               // slipstream
+    if(tow>1)vt=Math.min(c.top*tow,vt*1.01);
+    // --- lane: the racing line (wide – apex – wide), unless we are attacking or someone is beside us
+    let to=RACEO[(i+12)%N];
+    if(c.err>R.t){to+=c.errO;vt*=0.93;} // a small mistake: wide and slow out of the corner
+    if(blk&&blk.v<vt*1.02&&c.fin==null){
+      // attack: commit to a side for a while. Most drivers dive down the inside of the next corner,
+      // some go round the outside, and on a straight they pull out of the slipstream to the free side
+      if(c.passO==null&&R.t>c.passT){
+        // only go for it when it makes sense: a quicker car, a car that has slowed (a mistake), or a brave driver
+        const qr=blk.c?blk.c.skill*Math.sqrt(blk.c.top):c.skill*Math.sqrt(c.top),mr=c.skill*Math.sqrt(c.top);
+        const chance=(blk.v<vt*0.95?0.9:Math.max(0,Math.min(0.85,(mr/qr-1)*10+0.03+0.15*c.aggr+(tow>1?0.12:0))))*0.75*Math.min(1,(TW/204)**5); // narrow streets (Monaco): far fewer tries
+        if(rnd2(c)>chance){c.passT=R.t+1.2+rnd2(c);}else{
+        const cs=cornerSide(i);let pref=cs!==0?(rnd2(c)<0.8-0.25*c.aggr?cs:-cs):(blk.o>0?-1:1);
+        let best=null;
+        for(const sd of [pref,-pref]){const lane=Math.max(-L,Math.min(L,blk.o+sd*(CARW+24)));if(Math.abs(lane-blk.o)<CARW+14)continue;
+          let free=true;for(const q of obs){if(q.c===c||q===blk)continue;const d=wrapD(q.s,c.s)*6;if(d>-CARL&&d<look+CARL&&Math.abs(q.o-lane)<CARW+8){free=false;break;}}
+          if(free){best=lane;break;}}
+        c.passO=best;c.passT=R.t+1.4+rnd2(c)*1.2;
+      }}
+    }else if(c.passO!=null&&R.t>c.passT){c.passO=null;c.passT=R.t+0.8;}
+    if(c.passO!=null&&R.t>c.passT+0.01){c.passO=null;c.passT=R.t+0.8;}
+    if(c.passO!=null){to=c.passO;if(near.some(n=>n.g>-CARL&&n.g<CARL*1.2&&Math.abs(n.dO)<CARW+40))vt*=1.02;} // alongside: brake a touch later
+    // --- never steer into a car that is beside us: keep a car's width (plus room) to it
+    let lo=-L,hi=L;
+    for(const n of near){if(Math.abs(n.g)>=CARL+12)continue;
+      if(n.dO>0)hi=Math.min(hi,n.q.o-(CARW+12));else lo=Math.max(lo,n.q.o+(CARW+12));}
+    if(lo<=hi)to=Math.max(lo,Math.min(hi,to));else to=c.o;
+    // --- stuck behind: follow at a safe distance
+    if(blk&&Math.abs(blk.o-c.o)<CARW+4)vt=Math.min(vt,Math.max(0,blk.v+(bg-CARL-14)*1.6));
     // speed
     if(c.v<vt)c.v+=c.top*c.acc*(1-(c.v/c.top)**2)*dt;else c.v=Math.max(vt,c.v-(c.top*0.12+c.v*0.6)*dt*1.15);
-    // sideways: ease towards the chosen lane, quicker at speed
-    const maxLat=40+90*Math.min(1,c.v/c.top);
-    const want=Math.max(-maxLat,Math.min(maxLat,(to-c.o)*2.2));
-    c.lat+=(want-c.lat)*Math.min(1,dt*5);
-    c.o=Math.max(-(HALF-22),Math.min(HALF-22,c.o+c.lat*dt));
-    const ps0=c.s;c.s+=c.v*dt/6;c.dist+=c.v*dt*0.25;
+    // sideways: ease towards the lane like a real car changes direction (no sudden jumps)
+    const maxLat=30+120*Math.min(1,c.v/c.top);
+    const want=Math.max(-maxLat,Math.min(maxLat,(to-c.o)*2.4));
+    c.lat+=(want-c.lat)*Math.min(1,dt*4);
+    c.o=Math.max(-L-2,Math.min(L+2,c.o+c.lat*dt));
+    // move along the road: on the inside line the lap is shorter, on the outside longer
+    const ps0=c.s;c.s+=c.v*dt/(6*laneF(i,c.o));c.dist+=c.v*dt*0.25;
     if(c.fin==null&&ps0<R.lapsTotal*N&&c.s>=R.lapsTotal*N)c.fin=R.t-dt*(c.s-R.lapsTotal*N)/Math.max(1e-6,c.s-ps0);
+    // now and then a driver makes a small mistake at a corner entry (opens a door for the car behind)
+    if(Math.floor(ps0/40)!==Math.floor(c.s/40)&&Math.abs(CURV[i])>0.004&&rnd2(c)<0.003){c.err=R.t+1.1;c.errO=-Math.sign(CURV[i])*40;}
     c.steer=Math.max(-1,Math.min(1,CURV[i]*120+c.lat*0.004));
   }
-  // contact: cars can't drive through each other (all in track coordinates)
+  // contact: cars can't drive through each other
   for(let a=0;a<AIS.length;a++)for(let b=a+1;b<AIS.length;b++)aiContact(AIS[a],AIS[b]);
   if(R.state==='race'||R.state==='done'){
     for(const c of AIS){
-      const ds=wrapD(c.s,ps)*6,dO=c.o-car.o;
+      const d=wrapD(c.s,ps);if(Math.abs(d)>40)continue;
+      const ci=((Math.floor(c.s)%N)+N)%N,ds=d*6*laneF(ci,(c.o+car.o)/2),dO=c.o-car.o;
       if(Math.abs(ds)<CARL&&Math.abs(dO)<CARW&&Math.abs(car.o)<HALF+20){
         const ox=CARW-Math.abs(dO),oy=CARL-Math.abs(ds);
-        if(ox<oy*0.6){const sd=Math.sign(dO)||1,push=ox/2;c.o=Math.max(-(HALF-22),Math.min(HALF-22,c.o+sd*push));const n=NOR[car.idx];car.x-=n[0]*sd*push;car.y-=n[1]*sd*push;c.lat*=0.5;}
+        if(ox<oy*0.7){const sd=Math.sign(dO)||1,push=ox/2;c.o=Math.max(-(HALF-22),Math.min(HALF-22,c.o+sd*push));const n=NOR[car.idx];car.x-=n[0]*sd*push;car.y-=n[1]*sd*push;c.lat=sd*Math.abs(c.lat)*0.5;}
         else if(ds>0){car.v=Math.min(car.v,c.v*0.96);const t=TAN[car.idx];car.x-=t[0]*oy*0.6;car.y-=t[1]*oy*0.6;bump=Math.max(bump,0.12);}
         else{c.v=Math.min(c.v,Math.max(0,car.v)*0.96);c.s-=oy/6*0.6;bump=Math.max(bump,0.1);}
       }
-      if(ds>CARL&&ds<260&&Math.abs(dO)<34)R.tow=1;
+      if(ds>CARL&&ds<300&&Math.abs(dO)<36)R.tow=1;
     }
   }
   for(const c of AIS)aiPose(c);
 }
+function rnd2(c){c.seed=(c.seed*16807)%2147483647;return c.seed/2147483647;}
 function aiContact(a,b){
-  const ds=wrapD(a.s,b.s)*6,dO=a.o-b.o;
+  const d=wrapD(a.s,b.s);if(Math.abs(d)>40)return;
+  const i=((Math.floor(b.s)%N)+N)%N,ds=d*6*laneF(i,(a.o+b.o)/2),dO=a.o-b.o;
   if(Math.abs(ds)>=CARL||Math.abs(dO)>=CARW)return;
   const ox=CARW-Math.abs(dO),oy=CARL-Math.abs(ds);
-  if(ox<oy*0.6){const sd=Math.sign(dO)||1,p=ox/2,L=HALF-22;a.o=Math.max(-L,Math.min(L,a.o+sd*p));b.o=Math.max(-L,Math.min(L,b.o-sd*p));}
+  if(ox<oy*0.7){const sd=Math.sign(dO)||1,p=ox/2,L=HALF-22;a.o=Math.max(-L,Math.min(L,a.o+sd*p));b.o=Math.max(-L,Math.min(L,b.o-sd*p));a.lat*=0.5;b.lat*=0.5;}
   else{const [r,f]=ds>0?[b,a]:[a,b];r.v=Math.min(r.v,f.v*0.97);r.s-=oy/6*0.7;}
 }
 // running order: finished cars by finishing time, the rest by how far they have come
