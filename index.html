@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.25</title>
+<title>Formel 1 v0.26</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.25">
+<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.26">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -96,7 +96,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.25 · sæson 2026</div>
+    <div class="sub">v0.26 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big blue" id="train">TRÆNING<small>Kør alene og jagt din egen bedste omgang</small></button>
@@ -176,7 +176,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.25</div>
+<div class="ver">v0.26</div>
 
 <script>
 "use strict";
@@ -735,12 +735,23 @@ cv.addEventListener('pointerdown',e=>{
   e.preventDefault();audioUnlock();
   const role=roleAt(e.clientX,e.clientY);if(!role)return;
   if(role==='pause'){if(R.state==='race')pauseGame();return;}
-  ptr.set(e.pointerId,{role,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY});
+  ptr.set(e.pointerId,{role,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,mouse:e.pointerType==='mouse'});
   try{cv.setPointerCapture(e.pointerId);}catch(_){}
 });
-cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(p){p.x=e.clientX;p.y=e.clientY;}});
+cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;p.x=e.clientX;p.y=e.clientY;
+  // a finger sliding between ◀ and ▶ switches direction; sliding off the buttons stops steering
+  if(p.role==='left'||p.role==='right'||p.role==='none'){const r=roleAt(e.clientX,e.clientY);p.role=r==='left'||r==='right'?r:'none';}});
+// v0.26: a steering button could stay "held" when the browser lost the finger's release (it was let go
+// outside the game, over a menu, or the system took the touch). Every way a touch can end now releases it.
 const up=e=>{ptr.delete(e.pointerId);};
-cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+for(const ev of ['pointerup','pointercancel','lostpointercapture'])cv.addEventListener(ev,up);
+for(const ev of ['pointerup','pointercancel'])addEventListener(ev,up,true);
+// touch backup: when no finger is on the screen any more, nothing can be held
+const touchSync=e=>{if(!e.touches||e.touches.length===0)ptr.clear();else if(ptr.size>e.touches.length){ // drop the oldest extras
+  const keep=[...ptr.keys()].slice(-e.touches.length);for(const k of [...ptr.keys()])if(!keep.includes(k))ptr.delete(k);}};
+addEventListener('touchend',touchSync,true);addEventListener('touchcancel',touchSync,true);
+addEventListener('mouseup',()=>{for(const [k,p] of ptr)if(p.mouse)ptr.delete(k);},true);
+addEventListener('pagehide',()=>ptr.clear());
 addEventListener('keydown',e=>{inp.keys[e.code]=true;if(e.code==='KeyP'||e.code==='Escape'){if(R.state==='race')pauseGame();else if(R.state==='pause')resumeGame();} if(e.code.startsWith('Arrow')||e.code==='Space')e.preventDefault();});
 addEventListener('keyup',e=>{inp.keys[e.code]=false;});
 addEventListener('blur',()=>{inp.keys={};});
@@ -1551,7 +1562,7 @@ function startRace(){
   show(null);
   ptr.clear();
 }
-function pauseGame(){R.state='pause';show('pause');}
+function pauseGame(){R.state='pause';ptr.clear();show('pause');}
 function resumeGame(){R.state='race';show(null);ptr.clear();last=performance.now();}
 function showFinish(){
   if(R.state!=='race')return;
