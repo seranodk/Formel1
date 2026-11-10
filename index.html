@@ -3,10 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Formel 1 v0.26</title>
+<title>Formel 1 v0.27</title>
 <meta name="spil:navn" content="Formel 1">
 <meta name="spil:genre" content="Racer">
-<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.26">
+<meta name="description" content="Formel 1 ovenfra med alle 22 kørere på banen. Kør mod de 21 andre i hurtig løb, kør hele 2026-sæsonen med point og VM-stilling på alle 23 baner, eller træn alene mod din egen spøgelsesbil. v0.27">
 <meta name="theme-color" content="#d71f26">
 <style>
 :root{color-scheme:dark;--bg:#3f8a3a;--panel:rgba(15,15,20,.9);--red:#d71f26;--txt:#fff;--mut:#a9adb5}
@@ -96,7 +96,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
 <div class="ov" id="menu">
   <div class="card">
     <h1>FORMEL <span>1</span></h1>
-    <div class="sub">v0.26 · sæson 2026</div>
+    <div class="sub">v0.27 · sæson 2026</div>
     <button class="big" id="quick">HURTIG LØB<small>Vælg kører og bane, og kør med det samme</small></button>
     <button class="big" id="season">SÆSON<small id="seasonsub">Kør hele kalenderen med én kører</small></button>
     <button class="big blue" id="train">TRÆNING<small>Kør alene og jagt din egen bedste omgang</small></button>
@@ -176,7 +176,7 @@ td span{display:inline-block;min-width:48px;padding:1px 4px;border-radius:4px;fo
     <button class="big alt" id="fmenu">Menu</button>
   </div>
 </div>
-<div class="ver">v0.26</div>
+<div class="ver">v0.27</div>
 
 <script>
 "use strict";
@@ -547,7 +547,7 @@ function drawWorld(c,vx0,vy0,vx1,vy1){
     for(const t of tv)for(let k=0;k<6;k++){const a=k*1.047+t[2];c.moveTo(t[0],t[1]);c.lineTo(t[0]+Math.cos(a)*t[2]*.9,t[1]+Math.sin(a)*t[2]*.9);}c.stroke();
     c.fillStyle='#7a5a32';c.beginPath();for(const t of tv){c.moveTo(t[0]+5,t[1]);c.arc(t[0],t[1],5,0,6.2832);}c.fill();
   }else{
-    for(const [dx,f,col] of [[12,1,'rgba(0,0,0,.22)'],[0,1,E.tree[0]],[-0.25,0.6,E.tree[1]]]){
+    for(const [dx,f,col] of [[34,1.05,'rgba(0,10,0,.20)'],[22,1,'rgba(0,10,0,.22)'],[0,1,E.tree[0]],[-0.22,0.68,E.tree[1]],[-0.38,0.32,'rgba(255,255,200,.22)']]){ // long soft shadows (the sun is low in the north-west), a sunlit top
       c.beginPath();for(const t of tv){const x=t[0]+(dx>1?dx:dx*t[2]),y=t[1]+(dx>1?dx:dx*t[2]),r=t[2]*f;c.moveTo(x+r,y);c.arc(x,y,r,0,6.2832);}c.fillStyle=col;c.fill();
     }
   }
@@ -587,7 +587,15 @@ function drawWorld(c,vx0,vy0,vx1,vy1){
     c.strokeStyle=pass?'#d8262c':'#f4f4f4';c.setLineDash(pass?[12,12]:[]);
     for(const r of KERB_RUNS)if(vis(r.b)){c.beginPath();r.p.forEach((q,k)=>k?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.stroke();}
   }
-  c.setLineDash([]);c.lineCap='round';
+  c.setLineDash([]);
+  if(!T.city){ // advertising boards (made-up names) along the straights, and marshal posts
+    const AD=[['TURBO','#e8262c','#fff'],['NORDVIND','#0b3d91','#fff'],['VOLT','#ffd23c','#111'],['APEX','#111','#fff'],['GRIP+','#19a05a','#fff'],['FARTEN','#fff','#d8262c']];
+    for(const [lim,sd,shr] of [[LIMP,1,SHP],[LIMM,-1,SHM]])for(const ch of chunks)for(let i=ch.s;i<ch.e;i++){const j=i%N;if(j%14||CROSS[j]||shr[j]>=0||Math.abs(CURV[j])>0.0012||lim[j]>HALF+110)continue;
+      const q=off(j,sd*(lim[j]+16)),ad=AD[(j/14+(sd>0?0:3))%6|0];c.save();c.translate(q[0],q[1]);c.rotate(Math.atan2(TAN[j][1],TAN[j][0])+(sd>0?Math.PI:0));
+      c.fillStyle='rgba(0,0,0,.25)';c.fillRect(-36,-3,76,14);c.fillStyle=ad[1];c.fillRect(-38,-7,76,14);c.fillStyle=ad[2];c.font='900 10px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(ad[0],0,0.5);c.restore();
+      if(j%56===0){const m=off(j,sd*(lim[j]+34));c.fillStyle='rgba(0,0,0,.25)';c.fillRect(m[0]-7,m[1]-7,18,18);c.fillStyle='#ff7a1a';c.fillRect(m[0]-9,m[1]-9,18,18);c.fillStyle='#fff';c.fillRect(m[0]-9,m[1]-2,18,4);}}
+  }
+  c.lineCap='round';
   // barriers: concrete walls on street circuits, armco elsewhere (gaps where the track crosses itself)
   const wallSt=T.city?[['rgba(0,0,0,.3)',14],['#e4e2dc',9],['#c9c6be',3]]:[['rgba(0,0,0,.25)',9],['#c9ced6',5]];
   for(const [lim,sd] of [[LIMP,1],[LIMM,-1]]){
@@ -614,9 +622,15 @@ function drawWorld(c,vx0,vy0,vx1,vy1){
       c.restore();
       for(const [sx,sy,sa,len,col] of STANDS){
         c.save();c.translate(sx,sy);c.rotate(sa);
-        c.fillStyle='rgba(0,0,0,.25)';c.fillRect(-len/2+10,-30,len,80);
+        c.fillStyle='rgba(0,0,0,.25)';c.fillRect(-len/2+10,-30,len,80);{c.save();c.rotate(-sa);c.fillStyle='rgba(0,10,0,.2)';c.translate(30,30);c.rotate(sa);c.fillRect(-len/2,-40,len,80);c.restore();}
         c.fillStyle=col;c.fillRect(-len/2,-40,len,80);
         c.fillStyle='rgba(255,255,255,.18)';for(let x=-len/2+10;x<len/2;x+=24)c.fillRect(x,-34,14,68);
+        { // spectators, the front rail and flags
+          const CC=['#e8262c','#fff','#ffd23c','#2b6fff','#ff8a1e','#f4f4f4','#19c37d','#222'];let sd=7+Math.abs(Math.round(sx*3+sy));
+          c.fillStyle='#3a3d44';c.fillRect(-len/2,-40,len,80);
+          for(let y=-34;y<=24;y+=8){c.fillStyle='rgba(255,255,255,.07)';c.fillRect(-len/2+4,y-3,len-8,1.5);for(let x=-len/2+7;x<len/2-5;x+=7){sd=(sd*16807)%2147483647;if(sd%9<1)continue;c.fillStyle=CC[sd%8];c.beginPath();c.arc(x+(sd%3),y+((sd>>4)%3),2.6,0,7);c.fill();}}
+          c.fillStyle='#e9edf2';c.fillRect(-len/2,26,len,14);c.fillStyle='rgba(0,0,0,.18)';c.fillRect(-len/2,24,len,3);
+          for(let x=-len/2+20;x<len/2;x+=60){c.fillStyle='#d8262c';c.fillRect(x,28,3,10);c.fillStyle=['#ffd23c','#2b6fff','#fff'][Math.abs(Math.round(x/60))%3];c.fillRect(x+3,28,12,7);}}
         c.restore();
       }
     }
@@ -638,7 +652,7 @@ function tyre(c,x,y,w,h,ang,roll){
   c.fillStyle='#e8262c';c.fillRect(-w/2+1,h/2*(y<0?-1:1)-(y<0?0:0.9),w-2,0.9); // compound band
   c.restore();
 }
-function drawF1(c,L,num,steer,roll,helmet){
+function drawF1(c,L,num,steer,roll,helmet,brake){
   const fa=(steer||0)*0.42;
   // rear + front tyres (front ones turn with the steering)
   tyre(c,-14.5,-9.5,11,7,0,roll);tyre(c,-14.5,9.5,11,7,0,roll);
@@ -663,6 +677,22 @@ function drawF1(c,L,num,steer,roll,helmet){
   c.fillStyle=helmet||'#fff';c.beginPath();c.arc(0,0,2.7,0,7);c.fill();
   c.fillStyle='rgba(20,30,40,.9)';c.beginPath();c.arc(0,0,2.7,-0.9,0.9);c.lineTo(0,0);c.closePath();c.fill();
   c.strokeStyle='rgba(30,30,30,.9)';c.lineWidth=1.2;c.beginPath();c.ellipse(1,0,5.5,3.8,0,-1.4,1.4);c.stroke();
+  {
+    // floor edges, sidepod inlets, mirrors
+    c.fillStyle='#17181c';c.beginPath();c.moveTo(-17,-8.6);c.lineTo(3,-9.2);c.lineTo(6,-7);c.lineTo(-17,-7);c.closePath();c.fill();c.beginPath();c.moveTo(-17,8.6);c.lineTo(3,9.2);c.lineTo(6,7);c.lineTo(-17,7);c.closePath();c.fill();
+    c.fillStyle='#0c0d10';c.beginPath();c.ellipse(3.2,-5.6,1.8,1.1,0.3,0,7);c.fill();c.beginPath();c.ellipse(3.2,5.6,1.8,1.1,-0.3,0,7);c.fill();
+    c.fillStyle=L.a;c.fillRect(6,-6.6,1.6,2.2);c.fillRect(6,4.4,1.6,2.2);
+    // light from above: a highlight down the spine and darker flanks
+    const gr=c.createLinearGradient(0,-8,0,8);gr.addColorStop(0,'rgba(0,0,0,.28)');gr.addColorStop(0.38,'rgba(255,255,255,0)');gr.addColorStop(0.5,'rgba(255,255,255,.34)');gr.addColorStop(0.62,'rgba(255,255,255,0)');gr.addColorStop(1,'rgba(0,0,0,.28)');
+    c.fillStyle=gr;c.beginPath();c.moveTo(-19,-7);c.lineTo(2,-8);c.quadraticCurveTo(8,-5,10,-3);c.lineTo(22,-2);c.lineTo(24,0);c.lineTo(22,2);c.lineTo(10,3);c.quadraticCurveTo(8,5,2,8);c.lineTo(-19,7);c.closePath();c.fill();
+    // airbox, front-wing elements, rear-wing endplates and rain light, wheel rims
+    c.fillStyle='#0c0d10';c.beginPath();c.ellipse(-4.2,0,1.9,1.4,0,0,7);c.fill();
+    c.strokeStyle='rgba(0,0,0,.45)';c.lineWidth=0.5;c.beginPath();c.moveTo(22.3,-10);c.lineTo(22.3,10);c.moveTo(23.8,-10);c.lineTo(23.8,10);c.stroke();
+    c.fillStyle='#111';c.fillRect(-24.4,-10.8,5.8,1.5);c.fillRect(-24.4,9.3,5.8,1.5);
+    c.fillStyle=brake?'#ff3b30':'#7a1512';c.fillRect(-25,-1,1.6,2);if(brake){c.fillStyle='rgba(255,60,40,.35)';c.beginPath();c.arc(-25,0,4,0,7);c.fill();}
+    c.fillStyle='rgba(255,255,255,.22)';for(const [x,y,w] of [[-14.5,-9.5,11],[-14.5,9.5,11],[14.5,-9,9],[14.5,9,9]])c.fillRect(x-w/2+1.2,y-0.5,w-2.4,1);
+    c.fillStyle='rgba(255,255,255,.75)';c.beginPath();c.arc(-0.9,-0.9,0.8,0,7);c.fill();
+  }
   // race number on the engine cover
   if(num!=null){c.save();c.translate(-9,0);c.rotate(Math.PI/2);c.fillStyle=lum(L.p)>0.6?'#111':'#fff';c.font='900 6.5px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(num,0,0);c.restore();}
 }
@@ -1050,6 +1080,7 @@ function aiStep(dt){
     // --- stuck behind: follow at a safe distance
     if(blk&&Math.abs(blk.o-c.o)<CARW+4)vt=Math.min(vt,Math.max(0,blk.v+(bg-CARL-14)*1.6));
     // speed
+    c.brk=c.v>vt+2; // lifting off: the rear light comes on
     if(c.v<vt)c.v+=c.top*c.acc*(1-(c.v/c.top)**2)*dt;else c.v=Math.max(vt,c.v-(c.top*0.12+c.v*0.6)*dt*1.15);
     // sideways: ease towards the lane like a real car changes direction (no sudden jumps)
     const maxLat=30+120*Math.min(1,c.v/c.top);
@@ -1120,8 +1151,8 @@ function drawAI(){
     if(Math.abs(x-cam.x)>VR+80||Math.abs(y-cam.y)>VR+80)continue;
     let da=c.a-c.pa;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;const a=c.px===undefined?c.a:c.pa+da*al;
     const {T,D}=drvOf(c.id);
-    g.save();g.translate(x+6,y+7);g.rotate(a);g.fillStyle='rgba(0,0,0,.35)';rr(g,-29,-13,58,26,9);g.fill();g.restore();
-    g.save();g.translate(x,y);g.rotate(a);g.drawImage(carSprite(c.id),-50,-25,100,50);g.restore();
+    g.save();g.translate(x+11,y+12);g.rotate(a);g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.rect(-40,-10,80,20);g.rect(-42,-18,12,36);g.rect(34,-21,9,42);g.fill();g.restore();
+    g.save();g.translate(x,y);g.rotate(a);g.drawImage(carSprite(c.id),-50,-25,100,50);if(c.brk){g.fillStyle='#ff3b30';g.fillRect(-42,-1.7,2.7,3.4);g.fillStyle='rgba(255,60,40,.35)';g.beginPath();g.arc(-42,0,6.7,0,7);g.fill();}g.restore();
   }
 }
 // ================= Training ghost =================
@@ -1238,6 +1269,16 @@ function prefetch(x0,y0,x1,y1,budget){
   miss.sort((a,b)=>a[0]-b[0]);
   for(let i=0;i<Math.min(budget,miss.length);i++){const t=makeTile(miss[i][1],miss[i][2]);t.used=tileTick;tiles.set(miss[i][1]+','+miss[i][2],t);}
 }
+// warm sunlight from one corner (not at night) and a soft darkening towards the edges of the screen,
+// painted once into a small picture and stretched over the view each frame
+let LIGHT=null;
+function lightLayer(){
+  const key=W+'x'+H+(TRK.night?'n':'d');if(LIGHT&&LIGHT.key===key)return LIGHT.c;
+  const c=document.createElement('canvas'),w=Math.max(2,Math.round(W/3)),h=Math.max(2,Math.round(H/3));c.width=w;c.height=h;const o=c.getContext('2d');
+  if(!TRK.night){const gr=o.createLinearGradient(0,0,w,h);gr.addColorStop(0,'rgba(255,214,140,.16)');gr.addColorStop(0.55,'rgba(255,214,140,0)');gr.addColorStop(1,'rgba(10,20,60,.16)');o.fillStyle=gr;o.fillRect(0,0,w,h);}
+  const vg=o.createRadialGradient(w/2,h*0.55,h*0.3,w/2,h*0.55,h*0.75);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,20,.34)');o.fillStyle=vg;o.fillRect(0,0,w,h);
+  LIGHT={key,c};return c;
+}
 function render(){
   g.setTransform(DPR,0,0,DPR,0,0);
   g.fillStyle='#3f8a3a';g.fillRect(0,0,W,H);
@@ -1252,9 +1293,10 @@ function render(){
   }
   drawGhost();drawAI();
   // car
-  g.save();g.translate(RP.x+6,RP.y+7);g.rotate(RP.a+RP.slip);g.fillStyle='rgba(0,0,0,.35)';rr(g,-29,-13,58,26,9);g.fill();g.restore();
-  {const T=team(),D=driver();g.save();g.translate(RP.x,RP.y);g.rotate(RP.a+RP.slip);g.scale(1.68,1.68);drawF1(g,T,D[2],car.steer,(car.dist||0)/1.5,D[3]);g.restore();}
+  /* the car's own shadow, in the shape of the car */ {for(const [o,al] of [[16,.16],[12,.2],[9,.22]]){g.save();g.translate(RP.x+o,RP.y+o*1.1);g.rotate(RP.a+RP.slip);g.fillStyle=`rgba(0,0,0,${al})`;rr(g,-40,-10,80,20,6);g.fill();rr(g,-42,-18,12,36,3);g.fill();rr(g,34,-21,9,42,3);g.fill();g.restore();}}
+  {const T=team(),D=driver();g.save();g.translate(RP.x,RP.y);g.rotate(RP.a+RP.slip);g.scale(1.68,1.68);drawF1(g,T,D[2],car.steer,(car.dist||0)/1.5,D[3],R.state!=='menu'&&R.t>R.go&&!inp.gas&&car.v>60);g.restore();}
   g.restore();
+  g.drawImage(lightLayer(),0,0,W,H); // sunlight and soft dark edges
   speedLines();
   hud();
   controls();
